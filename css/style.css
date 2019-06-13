@@ -1,0 +1,71 @@
+html {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 100px 0;
+  background-color: #000;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
+.tile {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.wall {
+  background-color: blue;
+}
+
+.ground {
+  border : 1px solid grey;
+}
+
+.pacman.EAST {
+  background: url("../images/pacman.png") 0 0 no-repeat #000;
+  background-size: contain;
+}
+
+.WEST {
+  background: url("../images/pacman-left.png") 0 0 no-repeat #000;
+  background-size: contain;
+}
+
+.NORTH {
+  background: url("../images/pacman-up.png") 0 0 no-repeat #000;
+  background-size: contain;
+}
+
+.SOUTH {
+  background: url("../images/pacman-down.png") 0 0 no-repeat #000;
+  background-size: contain;
+}
+
+.leftPos {
+  transform: rotate(-90deg);
+}
+
+.rightPos {
+  transform: rotate(90deg);
+}
+
+.input {
+  float: right;
+  width: 30%;
+}
+
+label, p {
+  color: #fff;
+}
+
+textarea {
+  margin-top: 10px;
+  font-size: 18px;
+}
