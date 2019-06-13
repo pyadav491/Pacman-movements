@@ -82,7 +82,7 @@ function reDrawMap() {
 
 //function to place the pacman
 function place(x,y,direction)  {
-  if(x >=0 && y >= 0) {
+  if((x >=0 && y >= 0) && (x <= gridHeight-1 && y <= gridHeight-1)) {
     gameData[pacman.y][pacman.x] = GROUND;
     pacman.x = x+1;
     pacman.y = gridHeight - y;
