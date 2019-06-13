@@ -1,21 +1,17 @@
 
 //Numerical representation of the game
 // It uses numbers to represnt walls, empty space and the pacman
-//creating grid of dimension 5unit*5unit
 let gameData = [
-  [1,1,1,1,1,1,1,1,1,1],
-  [1,2,2,2,2,2,2,2,2,1],
-  [1,2,2,2,2,2,2,2,2,1],
-  [1,2,2,2,2,2,2,2,2,1],
-  [1,2,2,2,5,2,2,2,2,1],
-  [1,2,2,2,2,2,2,2,2,1],
-  [1,2,2,2,2,2,2,2,2,1],
-  [1,2,2,2,2,2,2,2,2,1],
-  [1,2,2,2,2,2,2,2,2,1],
-  [1,1,1,1,1,1,1,1,1,1]
+  [1,1,1,1,1,1,1],
+  [1,2,2,2,2,2,1],
+  [1,2,2,2,2,2,1],
+  [1,2,2,5,2,2,1],
+  [1,2,2,2,2,2,1],
+  [1,2,2,2,2,2,1],
+  [1,1,1,1,1,1,1]
 ];
 
-
+var gridHeight = gameData.length - 2; //2 is for walls on both sides
 //WALL is represented by number 1, empty ground by 2 and pacman by 5
 const WALL = 1;
 const GROUND = 2;
@@ -25,8 +21,8 @@ const PACMAN = 5;
 let map;
 // will create pacman to have the x and y coordinates and the direction
 let pacman = {
-  x: 4,
-  y: 4,
+  x: 3,
+  y: 3,
   direction: 'EAST'
 };
 
@@ -66,7 +62,6 @@ function createTiles(data) {
   return tilesArray;
 }
 
-
 //creating map element, filling the tiles and adding it to the page
 function drawMap() {
   map = document.createElement('div');
@@ -80,21 +75,21 @@ function drawMap() {
 }
 
 // This function removes the map element from the page.
-function eraseMap() {
+function reDrawMap() {
   document.body.removeChild(map);
+  drawMap();
 }
 
 //function to place the pacman
 function place(x,y,direction)  {
-//  if(x >=0 && y >= 0) {
+  if(x >=0 && y >= 0) {
     gameData[pacman.y][pacman.x] = GROUND;
     pacman.x = x+1;
-    pacman.y = y+1;
+    pacman.y = gridHeight - y;
     pacman.direction = direction;
     gameData[pacman.y][pacman.x] = PACMAN;
-    eraseMap();
-    drawMap();
-//  }
+    reDrawMap();
+  }
 }
 
 function move() {
@@ -127,21 +122,18 @@ function move() {
     }
   }
 
-  eraseMap();
-  drawMap();
+  reDrawMap();
 }
 
 //Rotate left and change direction accordingly
 function left() {
   var pacmanCont = document.querySelector('.pacman');
   pacmanCont.classList.add("leftPos");
-  var leftPos = pacmanCont.classList.contains("leftPos");
-  if(pacman.direction === 'EAST' && leftPos === true) {pacman.direction = 'NORTH';}
-  else if(pacman.direction === 'WEST' && leftPos === true) {pacman.direction = 'SOUTH';}
-  else if(pacman.direction === 'NORTH' && leftPos === true) {pacman.direction = 'WEST';}
-  else if(pacman.direction === 'SOUTH' && leftPos === true) {pacman.direction = 'EAST';}
-  eraseMap();
-  drawMap();
+  if(pacman.direction === 'EAST') {pacman.direction = 'NORTH';}
+  else if(pacman.direction === 'WEST') {pacman.direction = 'SOUTH';}
+  else if(pacman.direction === 'NORTH') {pacman.direction = 'WEST';}
+  else if(pacman.direction === 'SOUTH') {pacman.direction = 'EAST';}
+  reDrawMap();
 }
 
 
@@ -149,19 +141,17 @@ function left() {
 function right() {
   var pacmanCont = document.querySelector('.pacman');
   pacmanCont.classList.add("rightPos");
-  var rightPos = pacmanCont.classList.contains("rightPos");
-  if(pacman.direction === 'EAST' && rightPos === true) {pacman.direction = 'SOUTH';}
-  else if(pacman.direction === 'WEST' && rightPos === true) {pacman.direction = 'NORTH';}
-  else if(pacman.direction === 'NORTH' && rightPos === true) {pacman.direction = 'EAST';}
-  else if(pacman.direction === 'SOUTH' && rightPos === true) {pacman.direction = 'WEST';}
-  eraseMap();
-  drawMap();
+  if(pacman.direction === 'EAST') {pacman.direction = 'SOUTH';}
+  else if(pacman.direction === 'WEST') {pacman.direction = 'NORTH';}
+  else if(pacman.direction === 'NORTH') {pacman.direction = 'EAST';}
+  else if(pacman.direction === 'SOUTH') {pacman.direction = 'WEST';}
+  reDrawMap();
 }
 
 //function  to output the final position for pacman
 function report() {
   var X = pacman.x-1;
-  var Y = pacman.y-1;
+  var Y = gridHeight-pacman.y;
   var dir = pacman.direction;
   var output = X + ',' + Y + ',' + dir;
   document.getElementById("output").innerHTML = "Output:" + " " + output;
@@ -177,16 +167,19 @@ textarea.addEventListener("blur", function (e) {
 function readFromInput() {
   var textArea = document.getElementsByTagName("textarea").Text1;
   var inputCommands = textArea.value.split("\n");
+
   for (var i = 0; i < inputCommands.length; i++) {
     inputCommands[i] = inputCommands[i].trim();
     if(inputCommands[i].match("^PLACE")){
       var command = inputCommands[i];
       var words = command.split(' ');
-      var xCord = parseInt(words[1]);
-      var yCord = parseInt(words[2]);
-      var direction = words[3];
+      var args = words[1].split(',');
+      var xCord = parseInt(args[0]);
+      var yCord = parseInt(args[1]);
+      var direction = args[2];
       place(xCord,yCord,direction);
     }
+
     else if(inputCommands[i] === "MOVE"){ move(); }
     else if(inputCommands[i] === "LEFT"){ left(); }
     else if(inputCommands[i] === "RIGHT"){ right(); }
