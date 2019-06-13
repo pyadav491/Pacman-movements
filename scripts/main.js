@@ -74,7 +74,7 @@ function drawMap() {
   document.body.appendChild(map);
 }
 
-// This function removes the map element from the page.
+// This function redraws the map element from the page.
 function reDrawMap() {
   document.body.removeChild(map);
   drawMap();
@@ -158,32 +158,38 @@ function report() {
 }
 
 //on blur of textbox the commands are executed
-var textarea = document.getElementsByTagName("textarea").Text1;
+var textarea = document.getElementById("textarea");
 textarea.addEventListener("blur", function (e) {
   readFromInput();
   textarea.value = "";
 });
 
 function readFromInput() {
-  var textArea = document.getElementsByTagName("textarea").Text1;
+  var textArea = document.getElementById("textarea");
   var inputCommands = textArea.value.split("\n");
+  function firstOccurrence(element) {
+    return element.match("^PLACE");
+  }
+  var firstOccurrenceIndex = inputCommands.findIndex(firstOccurrence);
+  if(firstOccurrenceIndex >= 0) {
+    var validCommands = inputCommands.slice(firstOccurrenceIndex);
+    for (var i = 0; i < validCommands.length; i++) {
+      validCommands[i] = validCommands[i].trim();
+      if(validCommands[i].match("^PLACE")){
+        var command = validCommands[i];
+        var words = command.split(' ');
+        var args = words[1].split(',');
+        var xCord = parseInt(args[0]);
+        var yCord = parseInt(args[1]);
+        var direction = args[2];
+        place(xCord,yCord,direction);
+      }
 
-  for (var i = 0; i < inputCommands.length; i++) {
-    inputCommands[i] = inputCommands[i].trim();
-    if(inputCommands[i].match("^PLACE")){
-      var command = inputCommands[i];
-      var words = command.split(' ');
-      var args = words[1].split(',');
-      var xCord = parseInt(args[0]);
-      var yCord = parseInt(args[1]);
-      var direction = args[2];
-      place(xCord,yCord,direction);
+      else if(validCommands[i] === "MOVE"){ move(); }
+      else if(validCommands[i] === "LEFT"){ left(); }
+      else if(validCommands[i] === "RIGHT"){ right(); }
+      if(validCommands[i] === "REPORT"){ report(); }
     }
-
-    else if(inputCommands[i] === "MOVE"){ move(); }
-    else if(inputCommands[i] === "LEFT"){ left(); }
-    else if(inputCommands[i] === "RIGHT"){ right(); }
-    if(inputCommands[i] === "REPORT"){ report(); }
   }
 }
 
