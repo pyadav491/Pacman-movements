@@ -205,7 +205,6 @@ function checkNumbers(value) {
     var numbers = splitString(value);
     if((numbers[0] >= 0 && numbers[1] >=0) && (numbers[0] <= gridHeight-1 && numbers[1] <= gridHeight-1)) return true;
     else return false;
-    splitString(value);
   }
 }
 
