@@ -191,17 +191,22 @@ function readFromInput() {
 
 function splitString(input) {
   var words = input.split(' ');
-  var args = words[1].split(',');
-  var xCord = parseInt(args[0]);
-  var yCord = parseInt(args[1]);
-  var direction = args[2];
-  return [xCord,yCord,direction];
+  if(words.length > 1) {
+    var args = words[1].split(',');
+    var xCord = parseInt(args[0]);
+    var yCord = parseInt(args[1]);
+    var direction = args[2];
+    return [xCord,yCord,direction];
+  }
 }
 
 function checkNumbers(value) {
-  var numbers = value.match(/\d+/g).map(Number)
-  if((numbers[0] >= 0 && numbers[1] >=0) && (numbers[0] <= gridHeight-1 && numbers[1] <= gridHeight-1)) return true;
-  else return false;
+  if(splitString(value) !== undefined) {
+    var numbers = splitString(value);
+    if((numbers[0] >= 0 && numbers[1] >=0) && (numbers[0] <= gridHeight-1 && numbers[1] <= gridHeight-1)) return true;
+    else return false;
+    splitString(value);
+  }
 }
 
 // Main   function
