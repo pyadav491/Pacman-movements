@@ -82,44 +82,44 @@ function reDrawMap() {
 
 //function to place the pacman
 function place(x,y,direction)  {
-  if((x >=0 && y >= 0) && (x <= gridHeight-1 && y <= gridHeight-1)) {
-    gameData[pacman.y][pacman.x] = GROUND;
-    pacman.x = x+1;
-    pacman.y = gridHeight - y;
-    pacman.direction = direction;
-    gameData[pacman.y][pacman.x] = PACMAN;
-    reDrawMap();
-  }
+  gameData[pacman.y][pacman.x] = GROUND;
+  pacman.x = x+1;
+  pacman.y = gridHeight - y;
+  pacman.direction = direction;
+  gameData[pacman.y][pacman.x] = PACMAN;
+  reDrawMap();
 }
 
 function move() {
-  if(pacman.direction === 'EAST') {
-    if (gameData[pacman.y][pacman.x+1] !== WALL) {
-      gameData[pacman.y][pacman.x] = GROUND;
-      pacman.x = pacman.x + 1 ;
-      gameData[pacman.y][pacman.x] = PACMAN;
-    }
-
-  } else if (pacman.direction === 'WEST') {
-    if (gameData[pacman.y][pacman.x-1] !== WALL) {
-      gameData[pacman.y][pacman.x] = GROUND;
-      pacman.x = pacman.x - 1 ;
-      gameData[pacman.y][pacman.x] = PACMAN;
-    }
-
-  } else if (pacman.direction === 'NORTH') {
-    if (gameData[pacman.y-1][pacman.x] !== WALL) {
-      gameData[pacman.y][pacman.x] = GROUND;
-      pacman.y = pacman.y - 1;
-      gameData[pacman.y][pacman.x] = PACMAN;
-    }
-
-  } else if (pacman.direction === 'SOUTH') {
-    if (gameData[pacman.y+1][pacman.x] !== WALL) {
-      gameData[pacman.y][pacman.x] = GROUND;
-      pacman.y = pacman.y + 1;
-      gameData[pacman.y][pacman.x] = PACMAN;
-    }
+  switch(pacman.direction) {
+    case 'EAST' :
+      if (gameData[pacman.y][pacman.x+1] !== WALL) {
+        gameData[pacman.y][pacman.x] = GROUND;
+        pacman.x = pacman.x + 1 ;
+        gameData[pacman.y][pacman.x] = PACMAN;
+      }
+      break;
+    case 'WEST' :
+      if (gameData[pacman.y][pacman.x-1] !== WALL) {
+        gameData[pacman.y][pacman.x] = GROUND;
+        pacman.x = pacman.x - 1 ;
+        gameData[pacman.y][pacman.x] = PACMAN;
+      }
+      break;
+    case 'NORTH' :
+      if (gameData[pacman.y-1][pacman.x] !== WALL) {
+        gameData[pacman.y][pacman.x] = GROUND;
+        pacman.y = pacman.y - 1;
+        gameData[pacman.y][pacman.x] = PACMAN;
+      }
+      break;
+    case 'SOUTH' :
+      if (gameData[pacman.y+1][pacman.x] !== WALL) {
+        gameData[pacman.y][pacman.x] = GROUND;
+        pacman.y = pacman.y + 1;
+        gameData[pacman.y][pacman.x] = PACMAN;
+      }
+      break;
   }
 
   reDrawMap();
@@ -175,22 +175,33 @@ function readFromInput() {
     var validCommands = inputCommands.slice(firstOccurrenceIndex);
     for (var i = 0; i < validCommands.length; i++) {
       validCommands[i] = validCommands[i].trim();
-      if(validCommands[i].match("^PLACE")){
+      if(validCommands[i].match("^PLACE") && !checkNumbers(validCommands[i])) { break;}
+      else if(validCommands[i].match("^PLACE") && checkNumbers(validCommands[i])){
         var command = validCommands[i];
-        var words = command.split(' ');
-        var args = words[1].split(',');
-        var xCord = parseInt(args[0]);
-        var yCord = parseInt(args[1]);
-        var direction = args[2];
-        place(xCord,yCord,direction);
+        var values = splitString(command);
+        place(values[0],values[1],values[2]);
       }
-
       else if(validCommands[i] === "MOVE"){ move(); }
       else if(validCommands[i] === "LEFT"){ left(); }
       else if(validCommands[i] === "RIGHT"){ right(); }
       if(validCommands[i] === "REPORT"){ report(); }
     }
   }
+}
+
+function splitString(input) {
+  var words = input.split(' ');
+  var args = words[1].split(',');
+  var xCord = parseInt(args[0]);
+  var yCord = parseInt(args[1]);
+  var direction = args[2];
+  return [xCord,yCord,direction];
+}
+
+function checkNumbers(value) {
+  var numbers = value.match(/\d+/g).map(Number)
+  if((numbers[0] >= 0 && numbers[1] >=0) && (numbers[0] <= gridHeight-1 && numbers[1] <= gridHeight-1)) return true;
+  else return false;
 }
 
 // Main   function
